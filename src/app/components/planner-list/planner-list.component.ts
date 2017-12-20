@@ -68,7 +68,7 @@ import { setTimeout } from 'core-js/library/web/timers';
   },
   selector: 'alm-work-item-list',
   templateUrl: './planner-list.component.html',
-  styleUrls: ['./planner-list.component.less']
+  styleUrls: ['./planner-list.component.less' ]
 })
 export class PlannerListComponent implements OnInit, AfterViewChecked, OnDestroy {
   @ViewChildren('activeFilters', { read: ElementRef }) activeFiltersRef: QueryList<ElementRef>;
@@ -83,8 +83,10 @@ export class PlannerListComponent implements OnInit, AfterViewChecked, OnDestroy
   selectType: string = 'checkbox';
   @ViewChild('toolbarHeight') toolbarHeight: ElementRef;
   @ViewChild('containerHeight') containerHeight: ElementRef;
+  @ViewChild('myTable') table: any;
 
 
+  expanded: any = {};
   datatableWorkitems: any[] = [];
   checkableColumn: any[] = datatableColumn;
   columns: any[] = this.checkableColumn;
@@ -1000,6 +1002,15 @@ export class PlannerListComponent implements OnInit, AfterViewChecked, OnDestroy
 
   //ngx-datatable methods
 
+  toggleExpandRow(row) {
+    console.log('Toggled Expand Row!', row);
+    this.table.rowDetail.toggleExpandRow(row);
+  }
+
+  onDetailToggle(event) {
+    console.log('Detail Toggled', event);
+  }
+
   onDetailPreview(id): void {
     event.stopPropagation();
     this.workItemDataService.getItem(id).subscribe(workItem => {
@@ -1071,6 +1082,36 @@ export class PlannerListComponent implements OnInit, AfterViewChecked, OnDestroy
     return this.checkableColumn.filter(col => col.selected);
   }
 
+<<<<<<< HEAD
+||||||| merged common ancestors
+  tableConfigChange(value: boolean) {
+    this.isTableConfigOpen = value;
+  }
+
+  tableConfigToggle(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isTableConfigOpen = !this.isTableConfigOpen;
+  }
+
+  // End:  Setting(tableConfig) Dropdown
+
+
+=======
+  tableConfigChange(value: boolean) {
+    this.isTableConfigOpen = value;
+  }
+
+  tableConfigToggle(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isTableConfigOpen = false;
+  }
+
+  // End:  Setting(tableConfig) Dropdown
+
+
+>>>>>>> feat(datatable): add column for inline quickadd , add row-detail expand/collapse for quick add
   togglePanelState(event: any): void {
     if (event === 'out') {
       setTimeout(() => {
