@@ -69,12 +69,23 @@
           [treeToRelation]="'id'"
           (scroll)="onScroll($event)"
           (treeAction)="onTreeAction($event)">
+          <!-- columns id-assignees -->
           <ngx-datatable-column
             *ngFor="let c of (columns | filterColumn:'display')"
             [isTreeColumn]="c.name==='Title'"
             [name]="c.name"
             [width]="c.width"
+<<<<<<< HEAD
             [resizeable]="false">
+||||||| merged common ancestors
+            [resizeable]="false"
+            [sortable]="c.name === 'Title'">
+=======
+            [resizeable]="false"
+            [sortable]="c.name === 'Title'"
+            [cellClass]="'cell-overflow'"
+            [headerClass]="'cell-overflow'">
+>>>>>>> fix(datatable): use cellClass and headerClass in datatable columns
               <ng-template ngx-datatable-cell-tree-expander *ngIf="c.name==='Title'">
                 <i class="fa fa-angle-right tree-icon"></i>
               </ng-template>
@@ -104,10 +115,21 @@
                   </work-item-cell>
               </ng-template>
           </ngx-datatable-column>
+          <!-- Last Column  -->
           <ngx-datatable-column
             [width]="120"
             [resizeable]="false"
+<<<<<<< HEAD
             [headerTemplate]="headerTemplateN">
+||||||| merged common ancestors
+            [headerTemplate]="headerTemplateN"
+            [sortable]="false">
+=======
+            [headerTemplate]="headerTemplateN"
+            [sortable]="false"
+            [cellClass]="'cell-overflow'"
+            [headerClass]="'cell-overflow'">
+>>>>>>> fix(datatable): use cellClass and headerClass in datatable columns
             <ng-template let-row="row"
               ngx-datatable-cell-template>
               <div class="dropdown-kebab-pf planner-hack-dropdown
