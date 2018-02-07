@@ -1332,16 +1332,16 @@ export class PlannerListComponent implements OnInit, AfterViewChecked, OnDestroy
             this.datatableWorkitems[index].childrenLoaded = true;
             this.datatableWorkitems[index].treeStatus = 'expanded';
             console.log("### - 1", this.detailExpandedRows);
-
-            // this.detailExpandedRows.forEach(element => {
-            //   this.table.rowDetail.toggleExpandRow(element);
-            // });
+            setTimeout(() => {
+              this.detailExpandedRows.forEach(element => {
+                this.table.rowDetail.toggleExpandRow(element);
+              });
+            }, 10);
           })
       } else {
         console.log('##b');
         this.datatableWorkitems[index].treeStatus = 'expanded';
         this.datatableWorkitems = [...this.datatableWorkitems];
-
       }
     } else {
       this.datatableWorkitems[index].treeStatus = 'collapsed';
