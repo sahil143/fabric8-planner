@@ -778,9 +778,9 @@ export class PlannerListComponent implements OnInit, AfterViewChecked, OnDestroy
                 item.relationships.assignees.data;
             });
           })
-
         return values.workItems;
       })
+      
   }
 
   getParentIdsAll(items) {
@@ -805,8 +805,8 @@ export class PlannerListComponent implements OnInit, AfterViewChecked, OnDestroy
       const index = this.datatableWorkitems.findIndex(i => i.id === parentId);
       if (index > -1) {
         this.datatableWorkitems[index].treeStatus = 'loading';
-        this.table.rowDetail.collapseAllRows();
-        this.detailExpandedRows = [];
+        //this.table.rowDetail.collapseAllRows();
+        //this.detailExpandedRows = [];
       }
     }
   }
@@ -1328,12 +1328,20 @@ export class PlannerListComponent implements OnInit, AfterViewChecked, OnDestroy
       if (!this.datatableWorkitems[index].childrenLoaded) {
         this.loadChildren(this.workItems[index])
           .subscribe((wis) => {
+            console.log('##a');
             this.datatableWorkitems[index].childrenLoaded = true;
             this.datatableWorkitems[index].treeStatus = 'expanded';
+            console.log("### - 1", this.detailExpandedRows);
+
+            // this.detailExpandedRows.forEach(element => {
+            //   this.table.rowDetail.toggleExpandRow(element);
+            // });
           })
       } else {
+        console.log('##b');
         this.datatableWorkitems[index].treeStatus = 'expanded';
         this.datatableWorkitems = [...this.datatableWorkitems];
+
       }
     } else {
       this.datatableWorkitems[index].treeStatus = 'collapsed';
