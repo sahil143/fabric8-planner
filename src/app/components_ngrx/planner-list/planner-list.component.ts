@@ -160,7 +160,7 @@ export class PlannerListComponent implements OnInit, OnDestroy, AfterViewChecked
         this.workItemTypeSource.take(1),
         this.spaceSource.take(1),
         this.areaSource.take(1),
-        this.iterationSource.take(1),
+        this.iterationSource,
         this.labelSource.take(1),
         this.collaboratorSource.take(1),
         this.routeSource
