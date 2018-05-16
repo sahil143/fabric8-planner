@@ -78,6 +78,7 @@ export interface CommentUI {
 
 export interface CommentService extends Comment {}
 
+@Injectable()
 export class CommentMapper implements Mapper<CommentService, CommentUI> {
   constructor(){}
 
@@ -147,76 +148,5 @@ export class CommentMapper implements Mapper<CommentService, CommentUI> {
     return cleanObject(switchModel<CommentUI, CommentService>(
       arg, this.uiToServiceMapTree
     ));
-  }
-}
-
-
-@Injectable()
-export class CommentQuery {
-  private commentSource = this.store
-    .select(state => state.detailPage)
-    .select(state => state.comments);
-  constructor(
-    private store: Store<AppState>,
-    private userQuery: UserQuery,
-    private userService: UserService
-  ){}
-
-  getComments(commentIds: string[]) {
-    // Not needed now
-  }
-
-  getCommentsWithCreators(): Observable<CommentUI[]> {
-    return this.commentSource
-      .map(comments => {
-        return comments.map(comment => {
-          return {
-            ...comment,
-            creator: this.userQuery.getUserObservableById(comment.creatorId)
-          };
-        })
-      })
-      .switchMap(comments => {
-        return this.userService.loggedInUser
-          .map(user => user ? user : {id: '0'})
-          .map(user => {
-            return comments.map(c => {
-              return {...c, allowEdit: c.creatorId === user.id};
-            })
-          })
-      })
-  }
-
-  getCommentsWithChildren(): Observable<CommentUI[]> {
-    return this.getCommentsWithCreators()
-      .map(comments => {
-        return comments.map(comment => {
-          return {
-            ...comment,
-            children: comments.filter(c => c.parentId === comment.id)
-          } as CommentUI
-        })
-        // keep only the root comments
-        .filter(comment => !comment.parentId);
-      })
-  }
-
-  createComment(url: string, comment: CommentUI): void {
-    const comMapper = new CommentMapper();
-    this.store.dispatch(new AddCommentAction({
-      comment: comMapper.toServiceModel(comment),
-      url: url
-    }));
-  }
-
-  updateComment(comment: CommentUI): void {
-    const comMapper = new CommentMapper();
-    this.store.dispatch(new UpdateCommentAction(
-      comMapper.toServiceModel(comment)
-    ));
-  }
-
-  dispatchGet(url: string) {
-    this.store.dispatch(new GetCommentActions(url));
   }
 }

@@ -57,6 +57,13 @@ import { ClickOutModule } from '../../widgets/clickout/clickout.module';
 import { CommentQuery } from './../../models/comment';
 import { UserQuery } from './../../models/user';
 
+// Data Resolvers and Mappers
+import { CommentMapper } from './../../models/comment';
+import {
+  UserResolver,
+  UserMapper
+} from './../../models/user';
+
 let providers = [];
 
 if (process.env.ENV == 'inmemory') {
@@ -104,8 +111,14 @@ if (process.env.ENV == 'inmemory') {
     UrlService,
     InfotipService,
 
+<<<<<<< HEAD
     CommentQuery,
     UserQuery
+=======
+    CommentMapper,
+    UserResolver,
+    UserMapper
+>>>>>>> fix(user): user data is normalized and used for comments
   ];
 }
 
