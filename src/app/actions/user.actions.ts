@@ -1,4 +1,3 @@
-
 import { Action } from '@ngrx/store';
 import { UserUI } from './../models/user';
 import { UserState } from './../states/user.state';
