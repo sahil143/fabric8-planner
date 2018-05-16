@@ -56,5 +56,4 @@ export class UserEffects {
       }
       return Observable.of(new UserActions.GetError());
     });
-;
 }
