@@ -28,8 +28,7 @@ export class CommentEffects {
     private workItemService: WorkItemService,
     private store: Store<AppState>,
     private userMapper: UserMapper,
-    private notifications: Notifications,
-    private commentMapper: CommentMapper
+    private notifications: Notifications
   ) {}
   private commentMapper: CommentMapper = new CommentMapper();
 

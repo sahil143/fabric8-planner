@@ -78,7 +78,6 @@ export interface CommentUI {
 
 export interface CommentService extends Comment {}
 
-@Injectable()
 export class CommentMapper implements Mapper<CommentService, CommentUI> {
   constructor(){}
 
@@ -148,5 +147,33 @@ export class CommentMapper implements Mapper<CommentService, CommentUI> {
     return cleanObject(switchModel<CommentUI, CommentService>(
       arg, this.uiToServiceMapTree
     ));
+  }
+}
+
+
+@Injectable()
+export class CommentQuery {
+  private commentSource = this.store
+    .select(state => state.detailPage)
+    .select(state => state.comments);
+  constructor(
+    private store: Store<AppState>,
+    private userQuery: UserQuery
+  ){}
+
+  getComments(commentIds: string[]) {
+    // Not needed now
+  }
+
+  getCommentsWithCreators() {
+    return this.commentSource
+      .map(comments => {
+        return comments.map(comment => {
+          return {
+            ...comment,
+            creator: this.userQuery.getUserObservableById(comment.creatorId)
+          };
+        })
+      })
   }
 }
