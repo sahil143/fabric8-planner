@@ -14,7 +14,7 @@ import { GroupTypesService } from '../../services/group-types.service';
 import { IterationService } from '../../services/iteration.service';
 import { WorkItemService }   from '../../services/work-item.service';
 import { FilterService } from './../../services/filter.service';
-import { IterationUI } from '../../models/iteration.model';
+import { IterationUI, IterationQuery } from '../../models/iteration.model';
 import { WorkItem } from '../../models/work-item';
 import { FabPlannerIterationModalComponent } from '../iterations-modal/iterations-modal.component';
 
@@ -48,10 +48,14 @@ export class IterationComponent implements OnInit, OnDestroy, OnChanges {
   editEnabled: boolean = false;
   barchatValue: number = 70;
   selectedIteration: IterationUI;
-  allIterations: IterationUI[] = [];
+  private allIterations: Observable<IterationUI[]> = this.iterationQuery.getIterations();
   eventListeners: any[] = [];
-  treeIterations: IterationUI[] = [];
-  activeIterations:IterationUI[] = [];
+  private treeIterations: Observable<IterationUI[]> = this.iterationQuery.getIterationForTree().do((it) => {
+    if(this.startedCheckingURL) {
+      this.checkURL();
+    }
+  });
+  private activeIterations: Observable<IterationUI[]> = this.iterationQuery.getActiveIterations();
   spaceId: string = '';
   startedCheckingURL: boolean = false;
 
@@ -66,7 +70,8 @@ export class IterationComponent implements OnInit, OnDestroy, OnChanges {
     private notifications: Notifications,
     private route: ActivatedRoute,
     private workItemService: WorkItemService,
-    private store: Store<AppState>) {
+    private store: Store<AppState>,
+    private iterationQuery: IterationQuery) {
     }
 
   ngOnInit(): void {
@@ -83,28 +88,28 @@ export class IterationComponent implements OnInit, OnDestroy, OnChanges {
           console.log('collection is ', this.collection);
           this.spaceId = space.id;
           this.editEnabled = true;
-          this.getAndfilterIterations();
+          // this.getAndfilterIterations();
         } else {
           console.log('[IterationComponent] Space deselected.');
           this.editEnabled = false;
-          this.allIterations = [];
-          this.activeIterations = [];
+          // this.allIterations = [];
+          // this.activeIterations = [];
         }
       })
   }
 
   ngOnChanges() {
-    if (this.takeFromInput) {
-      // do not display the root iteration on the iteration panel.
-      this.allIterations = [];
-      for (let i=0; i<this.iterations.length; i++) {
-        if (!this.iterationService.isRootIteration(this.iterations[i].parentPath)) {
-          this.allIterations.push(this.iterations[i]);
-        }
-      }
-      this.clusterIterations();
-      this.treeIterations = this.iterationService.getTopLevelIterations2(this.allIterations);
-    }
+    // if (this.takeFromInput) {
+    //   // do not display the root iteration on the iteration panel.
+    //   this.allIterations = [];
+    //   for (let i=0; i<this.iterations.length; i++) {
+    //     if (!this.iterationService.isRootIteration(this.iterations[i].parentPath)) {
+    //       this.allIterations.push(this.iterations[i]);
+    //     }
+    //   }
+    //   this.clusterIterations();
+    //   this.treeIterations = this.iterationService.getTopLevelIterations2(this.allIterations);
+    // }
   }
 
   ngOnDestroy() {
@@ -153,46 +158,44 @@ export class IterationComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  getAndfilterIterations() {
-    if (this.takeFromInput) {
-      // do not display the root iteration on the iteration panel.
-      this.allIterations = [];
-      for (let i=0; i<this.iterations.length; i++) {
-        if (!this.iterationService.isRootIteration(this.iterations[i].parentPath)) {
-          this.allIterations.push(this.iterations[i]);
-        }
-      }
-      this.clusterIterations();
-      this.treeIterations =
-            this.iterationService.getTopLevelIterations2(this.allIterations);
-    } else {
-      this.eventListeners.push(
-        this.store
-          .select('listPage')
-          .select('iterations')
-          .filter(iterations => !!iterations.length)
-          .subscribe((iterations: IterationState) => {
-            // do not display the root iteration on the iteration panel.
-            this.allIterations = iterations.filter(i => {
-              return !this.iterationService.isRootIteration(i.parentPath);
-            });
-            this.clusterIterations();
-            this.treeIterations =
-              this.iterationService.getTopLevelIterations2(this.allIterations);
-            if (!this.startedCheckingURL) {
-              this.checkURL();
-            }
-          },
-          (e) => {
-            console.log('Some error has occured', e);
-          })
-        );
-    }
-  }
+  // getAndfilterIterations() {
+  //   if (this.takeFromInput) {
+  //     // do not display the root iteration on the iteration panel.
+  //     this.allIterations = [];
+  //     for (let i=0; i<this.iterations.length; i++) {
+  //       if (!this.iterationService.isRootIteration(this.iterations[i].parentPath)) {
+  //         this.allIterations.push(this.iterations[i]);
+  //       }
+  //     }
+  //     this.clusterIterations();
+  //     this.treeIterations =
+  //           this.iterationService.getTopLevelIterations2(this.allIterations);
+  //   } else {
+  //     this.eventListeners.push(
+  //       this.iterationQuery.getIterations()
+  //         //.filter(iterations => !!iterations.length)
+  //         .subscribe((iterations: IterationUI[]) => {
+  //           // do not display the root iteration on the iteration panel.
+  //           this.allIterations = iterations.filter(i => {
+  //             return !this.iterationService.isRootIteration(i.parentPath);
+  //           });
+  //           this.clusterIterations();
+  //           this.treeIterations =
+  //             this.iterationService.getTopLevelIterations2(this.allIterations);
+  //           if (!this.startedCheckingURL) {
+  //             this.checkURL();
+  //           }
+  //         },
+  //         (e) => {
+  //           console.log('Some error has occured', e);
+  //         })
+  //       );
+  //   }
+  // }
 
-  clusterIterations() {
-    this.activeIterations = this.allIterations.filter((iteration: IterationUI) => iteration.isActive);
-  }
+  // clusterIterations() {
+  //   this.activeIterations = this.allIterations.filter((iteration: IterationUI) => iteration.isActive);
+  // }
 
   updateItemCounts() {
     // this.log.log('Updating item counts..');
@@ -321,11 +324,11 @@ export class IterationComponent implements OnInit, OnDestroy, OnChanges {
           const selectedIterationID =
             this.filterService.getConditionFromQuery(val.q, 'iteration');
           if (selectedIterationID !== undefined) {
-            const selectedIteration =
-              this.allIterations.find(it => it.id === selectedIterationID);
-            if (!selectedIteration.selected) {
-              this.store.dispatch(new IterationActions.Select(selectedIteration));
-            }
+            // const selectedIteration =
+            //   this.allIterations.find(it => it.id === selectedIterationID);
+            // if (!selectedIteration.selected) {
+              this.store.dispatch(new IterationActions.Select(selectedIterationID));
+            // }
           } else {
             this.store.dispatch(new IterationActions.Select());
           }
