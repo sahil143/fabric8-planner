@@ -46,6 +46,9 @@ export const iterationReducer: ActionReducer<IterationState> =
               state[pId].showChildren = true;
               pId = state[pIndex].parentId;
             }
+            if (pId === '00000000-0000-0000-0000-000000000000') {
+              break;
+            }
           }
         } else {
           for (let i in state) {
