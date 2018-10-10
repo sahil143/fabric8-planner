@@ -1,4 +1,4 @@
-import { HttpResponse } from '@angular/common/http';
+import { HttpEvent, HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { getTestBed, TestBed } from '@angular/core/testing';
 import { HttpClientService } from './http.service';
@@ -93,7 +93,7 @@ describe('HttpService', () => {
 
     const req = httpMock.expectOne('/some/url');
     expect(req.request.method).toBe('DELETE');
-    req.event(new HttpResponse<boolean>({body: false}));
+    req.event(new HttpResponse<string>({body: null}));
   });
 
 });
